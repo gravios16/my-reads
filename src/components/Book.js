@@ -1,6 +1,11 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
+const options = [
+  { value: "none", text: "Move to...", disabled: true },
+  { value: "none", text: "None", disabled: false }
+]
+
 class Book extends Component {
   static propTypes = {
     book: PropTypes.object.isRequired,
@@ -8,15 +13,7 @@ class Book extends Component {
     changeBookShelf: PropTypes.func.isRequired
   }
 
-  state = {
-    options: [
-      { value: "none", text: "Move to...", disabled: true },
-      { value: "none", text: "None", disabled: false }
-    ]
-  }
-
   getOptions = () => {
-    const options = this.state.options
     const shelfs = this.props.shelfs
 
     let mixedOptions = [].concat(options)
@@ -34,14 +31,16 @@ class Book extends Component {
 
   render() {
     const book = this.props.book
-    const options = this.getOptions()
+    const mixedOptions = this.getOptions()
+    const bookCoverStyle = { width: 128, height: 188, backgroundImage: `url(${ (book.imageLinks) ? book.imageLinks.thumbnail : "" })` }
+
     return(
       <div className="book">
         <div className="book-top">
-          <div className="book-cover" style={{ width: 128, height: 188, backgroundImage: `url(${ (book.imageLinks) ? book.imageLinks.thumbnail : "" })` }}></div>
+          <div className="book-cover" style={bookCoverStyle}></div>
           <div className="book-shelf-changer">
             <select onChange={(event) => this.props.changeBookShelf(book, event.target.value)} value={book.shelf}>
-              { options.map( (o) => (
+              { mixedOptions.map( (o) => (
                 <option
                   key={book.id+"-"+o.text}
                   value={o.value}

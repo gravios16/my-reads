@@ -11,8 +11,6 @@ class ListBooks extends Component {
     changeBookShelf: PropTypes.func.isRequired
   }
 
-  state = {}
-
   groupBooksByShelf = () => {
     const { books, shelfs } = this.props
 
