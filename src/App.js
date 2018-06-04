@@ -15,13 +15,7 @@ class BooksApp extends React.Component {
       { key: "wantToRead", name: "Want to Read" },
       { key: "read", name: "Read" }
     ],
-    /**
-     * TODO: Instead of using this state variable to keep track of which page
-     * we're on, use the URL in the browser's address bar. This will ensure that
-     * users can use the browser's back and forward buttons to navigate between
-     * pages, as well as provide a good URL they can bookmark and share.
-     */
-    showSearchPage: false
+    showLoadingMask: false
   }
 
   componentDidMount() {
@@ -29,16 +23,20 @@ class BooksApp extends React.Component {
   }
 
   getBooks = ()  => {
+    this.setState(() => ({showLoadingMask: true}))
     BooksAPI.getAll()
     .then((books) => {
       this.setState(() => ({
-        books: books
+        books: books,
+        showLoadingMask: false
       }))
     })
   }
 
   changeBookShelf = (book, shelf) => {
+    this.setState(() => ({showLoadingMask: true}))
     BooksAPI.update(book, shelf).then( (r) => {
+      this.setState(() => ({showLoadingMask: false}))
       this.getBooks()
     })
   }
@@ -47,8 +45,12 @@ class BooksApp extends React.Component {
     return (
       <div className="app">
 
+        <div className={this.state.showLoadingMask ? "loading-mask" : "hide"}>
+          <div className="loader"></div>
+        </div>
+
         <Route path="/search" render={() => (
-          <SearchBook/>
+          <SearchBook shelfs={this.state.shelfs} books={this.state.books} changeBookShelf={this.changeBookShelf}/>
         )}/>
 
         <Route exact path="/" render={() => (
